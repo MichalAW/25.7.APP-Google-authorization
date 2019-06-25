@@ -39,7 +39,8 @@ app.get('/', function (req, res) {
 
 app.get('/logged', function (req, res) {
     res.render('logged', {
-        user: googleProfile
+        user: googleProfile,
+        url: "http://www.google.com"
     });
 });
 
