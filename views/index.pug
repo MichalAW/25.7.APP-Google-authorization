@@ -1,5 +1,8 @@
-html
+html    
     head
-        title responsne
+        style
+            include style.css
+        title="express, pug, google"
     body
-        h1 Hello, #{user}
+        h1 Log in, press on the button please
+            a(href="/auth/google"): div(class="container"): button.google_auth_button Login

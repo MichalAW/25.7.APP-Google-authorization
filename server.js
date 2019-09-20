@@ -5,6 +5,7 @@ var config = require('./config');
 var app = express();
 var googleProfile = {};
 
+// utrzymania sesji logowania, poprzez serializowanie ( kiedy sa wykonywane zadania uzytkownika )
 passport.serializeUser(function (user, done) {
     done(null, user);
 });
@@ -12,12 +13,15 @@ passport.deserializeUser(function (obj, done) {
     done(null, obj);
 });
 
+// konfiguracja zadania autoryzacji np. do google 
 passport.use(new GoogleStrategy({
-    clientID: config.GOOGLE_CLIENT_ID,
-    clientSecret: config.GOOGLE_CLIENT_SECRET,
-    callbackURL: config.CALLBACK_URL
-},
+        // dane z pliku config 
+        clientID: config.GOOGLE_CLIENT_ID,
+        clientSecret: config.GOOGLE_CLIENT_SECRET,
+        callbackURL: config.CALLBACK_URL
+    },
     function (accessToken, refreshToken, profile, cb) {
+        // w odpowiedzi otrzymamy profil uzytkownika przypisujac ja do pustej zmiennej {}
         googleProfile = {
             id: profile.id,
             displayName: profile.displayName
@@ -26,35 +30,38 @@ passport.use(new GoogleStrategy({
     }
 ));
 
+//silnik puga  inicjalizacja 
 app.set('view engine', 'pug');
 app.set('views', './views');
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', function (req, res) {
-    res.render('index', {
+// stworzenie endpointow dla aplikacji : 
+
+//app routes
+app.get('/', function(req, res){
+    res.render('index', { 
         user: req.user
     });
 });
 
-app.get('/logged', function (req, res) {
-    res.render('logged', {
-        user: googleProfile,
-        url: "http://www.google.com"
-    });
+app.get('/logged', function(req, res){
+    res.render('logged', { user: googleProfile });
 });
-
+//Passport routes
 app.get('/auth/google',
-    passport.authenticate('google', {
-        scope: ['profile', 'email']
-    })
-);
+passport.authenticate('google', {
+    scope : ['profile', 'email']
+}));
 
 app.get('/auth/google/callback',
     passport.authenticate('google', {
-        successRedirect: '/logged',
+        successRedirect : '/logged',
         failureRedirect: '/'
-    })
-);
+    }));
 
 app.listen(3000);
+
+app.use(function (req, res, next) {
+    res.status(404).send('We can not find your request!')
+});
