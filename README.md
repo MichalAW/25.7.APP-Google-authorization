@@ -1,7 +1,7 @@
 # 25.7.APP-Google-authorization
 An application using Google authorization
 
-repo --> https://github.com/MichalAW/25.7.APP-Google-authorization.git
+repo --> https://github.com/MichalAW/APP-Google-authorization.git
 
 # How it works
 1.Run script 'start' to launch app.
